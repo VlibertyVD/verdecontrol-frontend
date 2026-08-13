@@ -10,8 +10,11 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@geoman-io/leaflet-geoman-free": "^2.20.0",
     "@popperjs/core": "^2.11.8",
+    "@turf/turf": "^7.4.0",
     "bootstrap": "^5.3.8",
+    "leaflet": "^1.9.4",
     "nuxt": "^4.5.2",
     "vue": "^3.5.40",
     "vue-router": "^5.2.0"

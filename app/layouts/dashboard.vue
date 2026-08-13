@@ -14,13 +14,16 @@
         
         <button class="btn text-white fw-medium w-100 mb-4" style="background-color: #0B4F36;">+ New Report</button>
 
-        <!-- Navegación (Usa NuxtLink para no recargar la página) -->
         <ul class="nav flex-column gap-2 mb-auto text-secondary small fw-medium">
           <li class="nav-item">
             <NuxtLink to="/home" class="nav-link px-2 text-dark" exact-active-class="bg-success text-white rounded" style="exact-active-class: background-color: #0B4F36;">🎛️ Home (Timers)</NuxtLink>
           </li>
-          <li class="nav-item"><a href="#" class="nav-link text-secondary px-2">🗺️ Map</a></li>
-          <li class="nav-item"><a href="#" class="nav-link text-secondary px-2">🏢 Companies</a></li>
+          <li class="nav-item">
+            <NuxtLink to="/map" class="nav-link px-2 text-dark" exact-active-class="bg-success text-white rounded" style="exact-active-class: background-color: #0B4F36;">🗺️ Map</NuxtLink>
+          </li>
+          <li class="nav-item">
+            <NuxtLink to="/companies" class="nav-link px-2 text-dark" exact-active-class="bg-success text-white rounded" style="exact-active-class: background-color: #0B4F36;">🏢 Companies</NuxtLink>
+          </li>
           <li class="nav-item"><a href="#" class="nav-link text-secondary px-2">⚙️ Settings</a></li>
         </ul>
 
@@ -32,12 +35,13 @@
       </div>
 
       <div class="col-md-10">
-        <!-- Aquí Nuxt inyectará home.vue u otras páginas que usen este layout -->
+        
         <slot /> 
       </div>
 
     </div>
   </div>
+
 </template>
 
 <script setup>
