@@ -78,9 +78,8 @@
           </form>
         </div>
       </div>
-
       <!-- Columna Derecha: Imagen decorativa -->
-      <div class="col-lg-6 d-none d-lg-block position-relative bg-dark" style="background-image: url('https://images.unsplash.com/photo-1595180631627-9db07831f24d?q=80&w=1000'); background-size: cover; background-position: center;">
+      <div class="col-lg-6 d-none d-lg-block position-relative bg-dark" style="background-image: url('/images/bg-green-assets.jpeg'); background-size: cover; background-position: center;">
         <!-- Banner flotante sobre la imagen -->
         <div class="position-absolute bottom-0 start-50 translate-middle-x mb-5 w-75 bg-white p-4 rounded-3 shadow-lg d-flex align-items-start gap-3">
           <div class="bg-success rounded p-2 text-white mt-1" style="background-color: #0B4F36 !important;">
