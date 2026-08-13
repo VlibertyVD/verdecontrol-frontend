@@ -21,6 +21,3 @@ npm run dev
 
 ---
 
-## 🚀 ¡Listo para usar!
-
-Con las dos terminales corriendo, entra a la dirección que te indique el frontend (usualmente `http://localhost:3000`) en tu navegador. ¡El mapa y la API ya están conectados!
