@@ -54,17 +54,14 @@ const saveArea = async () => {
   try {
     const authCookie = useCookie('auth_token')
     
-    // 1. ATRAPAMOS LA RESPUESTA DEL BACKEND EN UNA VARIABLE (const response = ...)
-    // (Nota: ajusté el puerto al 9093 según tus logs, cámbialo si usas otro)
     const response = await $fetch('http://localhost:9093/api/green-zones', {
       method: 'POST',
       headers: { Authorization: `Bearer ${authCookie.value}` },
       body: form
     })
     
-    // 2. LE INYECTAMOS EL ID AL EVENTO QUE SE ENVÍA AL MAPA
     emit('saved', { 
-      id: response.id,  // <--- ¡ESTA ES LA LÍNEA MÁGICA QUE FALTABA!
+      id: response.id, 
       name: form.name, 
       area_size: form.area_size, 
       reminder_frequency: 'Weekly' 

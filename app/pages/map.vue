@@ -63,9 +63,8 @@ const loadExistingZones = async (L) => {
     const zones = await $fetch('http://localhost:9093/api/map-zones', { headers: getAuthHeaders() })
 console.log("Zonas que llegaron al mapa:", zones) // ¡Mira la consola del navegador!
     zones.forEach(zone => {
-      // 🛑 EL FILTRO SALVAVIDAS: Si esta zona no tiene polígono, la saltamos para que no rompa el mapa
       if (!zone.polygon_coordinates || zone.polygon_coordinates.length === 0) {
-        return; // Pasa a la siguiente zona
+        return; 
       }
 
       const feature = {

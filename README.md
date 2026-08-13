@@ -1,75 +1,26 @@
-# Nuxt Minimal Starter
+# 🌿 VerdeControl - Guía Rápida de Instalación
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Este proyecto se compone de dos partes: un **Backend (API)** construido con Django y un **Frontend (Web)** construido con Nuxt 3 y Vue.
 
-## Setup
+A continuación, los pasos para levantar el fronted en tu máquina local.
 
-Make sure to install dependencies:
 
+## 🎨 PARTE 1: Levantar el Frontend (Nuxt/Vue)
+e par
+Abre **otra terminal**, entra a la carpeta del frontend y ejecuta:
+
+### 1. Instalar las dependencias de Node:
 ```bash
-# npm
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
+### 2. Encender el servidor de desarrollo:
 ```bash
-# npm
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+---
 
-Build the application for production:
+## 🚀 ¡Listo para usar!
 
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+Con las dos terminales corriendo, entra a la dirección que te indique el frontend (usualmente `http://localhost:3000`) en tu navegador. ¡El mapa y la API ya están conectados!
