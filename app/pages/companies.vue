@@ -93,7 +93,9 @@
             <div class="row g-3">
               <div v-for="zone in companyDetail.green_zones" :key="zone.id" class="col-md-6">
                 <div class="card border-light-subtle rounded-4 overflow-hidden h-100 shadow-sm">
-                  <div class="bg-secondary w-100" style="height: 100px; background-image: url('https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=500'); background-size: cover; background-position: center;"></div>
+                  <!-- AQUÍ CAMBIAMOS LA IMAGEN -->
+                  <div class="bg-secondary w-100" style="height: 100px; background-image: url('/images/card-green-zone.jpeg'); background-size: cover; background-position: center;"></div>
+                  
                   <div class="p-3">
                     <h6 class="fw-bold mb-3">{{ zone.name }}</h6>
                     <div class="d-flex justify-content-between align-items-center">
