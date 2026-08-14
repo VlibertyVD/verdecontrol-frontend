@@ -12,7 +12,7 @@
     <!-- Componente 1: Guardar -->
     <ZoneSaveModal 
       v-if="showSaveModal"
-      :companies="userCompanies"
+      :companies="companies"
       :polygonCoordinates="tempCoordinates"
       :calculatedArea="tempAreaSize"
       @cancel="handleCancelDrawing"
@@ -35,65 +35,62 @@ import * as turf from '@turf/turf'
 
 definePageMeta({ layout: 'dashboard', middleware: 'auth' })
 
+// 1. IMPORTAMOS NUESTROS COMPOSABLES
+const { companies, fetchCompanies } = useCompanies() // Reutilizamos la lógica de empresas
+const { fetchMapZones } = useMapZones() // La nueva lógica de zonas
+
 let map = null
 let currentDrawnLayer = null
 
-const userCompanies = ref([])
+// Variables de UI y Modales
 const showSaveModal = ref(false)
 const showEditModal = ref(false)
 const selectedZone = ref({})
-
-// Variables temporales para pasar al componente
 const tempCoordinates = ref([])
 const tempAreaSize = ref('')
 
-const getAuthHeaders = () => {
-  const authCookie = useCookie('auth_token')
-  return { Authorization: `Bearer ${authCookie.value}` }
-}
-
-const fetchCompanies = async () => {
-  try {
-    userCompanies.value = await $fetch('http://localhost:9093/api/companies', { headers: getAuthHeaders() })
-  } catch (error) { console.error(error) }
-}
-
-const loadExistingZones = async (L) => {
-  try {
-    const zones = await $fetch('http://localhost:9093/api/map-zones', { headers: getAuthHeaders() })
-console.log("Zonas que llegaron al mapa:", zones) // ¡Mira la consola del navegador!
-    zones.forEach(zone => {
-      if (!zone.polygon_coordinates || zone.polygon_coordinates.length === 0) {
-        return; 
-      }
-
-      const feature = {
-        type: "Feature",
-        properties: { ...zone },
-        geometry: { type: "Polygon", coordinates: zone.polygon_coordinates }
-      }
-      
-      const layer = L.geoJSON(feature, {
-        style: { color: '#0B4F36', fillColor: '#0B4F36', weight: 2, fillOpacity: 0.4 }
-      }).addTo(map)
-      
-      layer.on('click', () => {
-        // Aseguramos que la frecuencia por defecto sea Weekly si viene vacía
-        selectedZone.value = { 
-            ...zone,
-            reminder_frequency: zone.reminder_frequency || 'Weekly'
-        }
-        showEditModal.value = true
-        showSaveModal.value = false
-      })
-    })
-  } catch (error) {
-    console.error("Error loading map zones:", error)
+// 2. FUNCIÓN DE GEOLOCALIZACIÓN
+const setMapToUserLocation = () => {
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // Si acepta, viajamos a sus coordenadas reales con un zoom más cercano (16)
+        map.setView([position.coords.latitude, position.coords.longitude], 16)
+      },
+      (error) => {
+        console.warn("Ubicación denegada. Nos quedamos en Mérida por defecto.", error.message)
+      },
+      { enableHighAccuracy: true, timeout: 5000 }
+    )
   }
 }
 
-// ----- MANEJADORES DE EVENTOS DE LOS COMPONENTES -----
+// 3. CARGA DE ZONAS
+const loadExistingZones = async (L) => {
+  const zones = await fetchMapZones()
+  
+  zones.forEach(zone => {
+    if (!zone.polygon_coordinates || zone.polygon_coordinates.length === 0) return;
 
+    const feature = {
+      type: "Feature",
+      properties: { ...zone },
+      geometry: { type: "Polygon", coordinates: zone.polygon_coordinates }
+    }
+    
+    const layer = L.geoJSON(feature, {
+      style: { color: '#0B4F36', fillColor: '#0B4F36', weight: 2, fillOpacity: 0.4 }
+    }).addTo(map)
+    
+    layer.on('click', () => {
+      selectedZone.value = { ...zone, reminder_frequency: zone.reminder_frequency || 'Weekly' }
+      showEditModal.value = true
+      showSaveModal.value = false
+    })
+  })
+}
+
+// 4. MANEJADORES DE EVENTOS
 const handleCancelDrawing = () => {
   if (currentDrawnLayer) map.removeLayer(currentDrawnLayer)
   showSaveModal.value = false
@@ -116,8 +113,7 @@ const handleAreaUpdated = (newFrequency) => {
   showEditModal.value = false
 }
 
-// ----------------------------------------------------
-
+// 5. INICIALIZACIÓN
 onMounted(async () => {
   await fetchCompanies()
 
@@ -126,9 +122,13 @@ onMounted(async () => {
   await import('@geoman-io/leaflet-geoman-free')
   await import('@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css')
 
-  map = L.map('map', { zoomControl: false }).setView([4.7110, -74.0721], 12)
+  // Inicializamos el mapa en Mérida por defecto
+  map = L.map('map', { zoomControl: false }).setView([8.5952, -71.1433], 13)
   L.control.zoom({ position: 'bottomright' }).addTo(map)
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map)
+
+  // Activamos la geolocalización (pedirá permiso al usuario)
+  setMapToUserLocation()
 
   await loadExistingZones(L)
 

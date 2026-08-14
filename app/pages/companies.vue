@@ -25,7 +25,7 @@
           <div 
             v-for="company in companies" 
             :key="company.id"
-            @click="selectCompany(company.id)"
+            @click="fetchCompanyDetail(company.id)" 
             class="card border p-3 rounded-4 cursor-pointer transition-all"
             :class="selectedId === company.id ? 'border-success bg-light shadow-sm' : 'border-light-subtle bg-white hover-shadow'"
             style="cursor: pointer;"
@@ -37,10 +37,24 @@
                 </div>
                 <div>
                   <h6 class="mb-0 fw-bold text-dark">{{ company.name }}</h6>
-                  <small class="text-secondary">📍 {{ company.zone }}</small>
+                  <small class="text-secondary">📍 {{ company.zone || 'Sede Principal' }}</small>
                 </div>
               </div>
-              <span class="text-secondary fw-bold">›</span>
+              
+              <!-- EL BOTÓN MÁGICO CONECTADO AL COMPOSABLE -->
+              <div>
+                <span v-if="activeCompanyId === company.id" class="badge bg-success rounded-pill px-3 py-2">
+                  ✅ Activa
+                </span>
+                <button 
+                  v-else 
+                  @click.stop="setActiveCompany(company.id)" 
+                  class="btn btn-outline-success btn-sm rounded-pill px-3 fw-bold"
+                >
+                  Seleccionar
+                </button>
+              </div>
+
             </div>
           </div>
         </div>
@@ -71,7 +85,7 @@
                   <div class="d-flex align-items-center gap-3">
                     <span class="text-secondary small">ID: {{ companyDetail.company_code }}</span>
                     <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1 fw-medium border border-success-subtle">
-                      ✓ {{ companyDetail.status }}
+                      ✓ {{ companyDetail.status || 'Active' }}
                     </span>
                   </div>
                 </div>
@@ -100,7 +114,7 @@
                     <h6 class="fw-bold mb-3">{{ zone.name }}</h6>
                     <div class="d-flex justify-content-between align-items-center">
                       <span class="small text-secondary">{{ zone.area_size }}</span>
-                      <span v-if="!zone.needs_attention" class="badge bg-success-subtle text-success rounded-pill px-2 py-1">💧 {{ zone.current_metric }}</span>
+                      <span v-if="!zone.needs_attention" class="badge bg-success-subtle text-success rounded-pill px-2 py-1">💧 {{ zone.current_metric || '100%' }}</span>
                       <span v-else class="badge bg-danger-subtle text-danger rounded-pill px-2 py-1">⚠️ Review</span>
                     </div>
                   </div>
@@ -128,7 +142,7 @@
                     <span class="text-secondary fs-5" style="cursor: pointer;">✉</span>
                   </div>
 
-                  <div v-if="!companyDetail.personnel?.length" class="text-muted small">No personnel registered.</div>
+                  <div v-if="!companyDetail.personnel || !companyDetail.personnel.length" class="text-muted small">No personnel registered.</div>
                 </div>
                 <button class="btn btn-link text-success text-decoration-none fw-bold mt-auto p-0 text-start" style="color: #0B4F36 !important;">See all personnel</button>
               </div>
@@ -171,69 +185,52 @@
       </div>
 
     </div>
-  </div>
+    
     <CompanyModal 
-    v-if="showModal" 
-    @close="showModal = false" 
-    @created="handleCompanyCreated" 
-  />
+      v-if="showModal" 
+      @close="showModal = false" 
+      @created="handleCompanyCreated" 
+    />
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 
-definePageMeta({
-  layout: 'dashboard',
-  middleware: 'auth'
-})
+definePageMeta({ layout: 'dashboard', middleware: 'auth' })
 
-const companies = ref([])
-const isLoadingList = ref(true)
+// 1. Traemos el composable de la LISTA
+const { 
+  companies, 
+  isLoadingList, 
+  activeCompanyId, 
+  fetchCompanies, 
+  setActiveCompany 
+} = useCompanies()
+
+// 2. Traemos el composable del DETALLE
+const { 
+  selectedId, 
+  companyDetail, 
+  isLoadingDetail, 
+  fetchCompanyDetail 
+} = useCompanyDetail()
+
+// 3. Variables y lógica visual
 const showModal = ref(false)
 
 const handleCompanyCreated = () => {
   showModal.value = false 
   fetchCompanies() 
 }
-const selectedId = ref(null)
-const companyDetail = ref({})
-const isLoadingDetail = ref(false)
 
-const getAuthHeaders = () => {
-  const authCookie = useCookie('auth_token')
-  return { Authorization: `Bearer ${authCookie.value}` }
-}
-
-const fetchCompanies = async () => {
-  try {
-    const data = await $fetch('http://localhost:9093/api/companies', { headers: getAuthHeaders() })
-    companies.value = data
-    // Seleccionar automáticamente la primera empresa de la lista si existe
-    if (data.length > 0) {
-      selectCompany(data[0].id)
-    }
-  } catch (error) {
-    console.error("Error cargando lista de empresas:", error)
-  } finally {
-    isLoadingList.value = false
+// 4. Arranque de la página
+onMounted(async () => {
+  await fetchCompanies()
+  // Si hay empresas, cargamos el detalle (haciendo fetch) de la primera
+  if (companies.value.length > 0) {
+    fetchCompanyDetail(companies.value[0].id)
   }
-}
-
-const selectCompany = async (id) => {
-  selectedId.value = id
-  isLoadingDetail.value = true
-  try {
-    const data = await $fetch(`http://localhost:9093/api/companies/${id}`, { headers: getAuthHeaders() })
-    companyDetail.value = data
-  } catch (error) {
-    console.error("Error cargando detalles:", error)
-  } finally {
-    isLoadingDetail.value = false
-  }
-}
-
-onMounted(() => {
-  fetchCompanies()
 })
 </script>
 
