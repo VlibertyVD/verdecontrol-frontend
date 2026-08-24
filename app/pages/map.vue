@@ -87,6 +87,11 @@ const loadExistingZones = async (L) => {
       showEditModal.value = true
       showSaveModal.value = false
     })
+
+    layer.on('contextmenu', (e) => {
+      if (e.originalEvent) e.originalEvent.preventDefault() // Bloquea el menú del navegador
+      deleteZone(zone.id, layer)
+    })    
   })
 }
 
@@ -97,11 +102,17 @@ const handleCancelDrawing = () => {
 }
 
 const handleAreaSaved = (savedData) => {
+  const savedLayer = currentDrawnLayer // Congelamos la referencia de la capa  
   currentDrawnLayer.setStyle({ color: '#0B4F36', fillColor: '#0B4F36' })
   
   currentDrawnLayer.on('click', () => {
     selectedZone.value = savedData
     showEditModal.value = true
+  })
+
+  savedLayer.on('contextmenu', (e) => {
+    if (e.originalEvent) e.originalEvent.preventDefault()
+    deleteZone(savedData.id, savedLayer)
   })
 
   showSaveModal.value = false
@@ -151,4 +162,34 @@ onMounted(async () => {
     showSaveModal.value = true
   })
 })
+
+// NUEVA FUNCIÓN: Eliminar zona
+const deleteZone = async (zoneId, layerToRemove) => {
+  const isConfirmed = window.confirm("⚠️ ¿Estás seguro de que deseas eliminar esta zona? Esta acción no se puede deshacer.")
+  
+  if (!isConfirmed) return
+
+  try {
+    const authCookie = useCookie('auth_token')
+    const response = await $fetch(`${config.public.apiBase}/api/green-zones/${zoneId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${authCookie.value}` }
+    })
+
+    if (response.success) {
+      // 1. Quitamos el polígono del mapa al instante
+      if (layerToRemove) {
+        map.removeLayer(layerToRemove)
+      }
+      
+      // 2. Si tenía el modal de edición abierto de casualidad, lo cerramos
+      if (selectedZone.value.id === zoneId) {
+        showEditModal.value = false
+      }
+    }
+  } catch (error) {
+    console.error("Error al eliminar la zona:", error)
+    alert("Hubo un problema intentando eliminar la zona.")
+  }
+}
 </script>

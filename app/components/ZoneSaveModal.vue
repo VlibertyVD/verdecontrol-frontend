@@ -11,19 +11,9 @@
       <input v-model="form.name" type="text" class="form-control bg-light border-0 py-2" placeholder="e.g. Sector A - North">
     </div>
 
-    <div class="mb-4">
-      <label class="form-label small fw-semibold text-secondary">Assign to Company</label>
-      <select v-model="form.company_id" class="form-select bg-light border-0 py-2">
-        <option value="" disabled>Select a company...</option>
-        <option v-for="company in companies" :key="company.id" :value="company.id">
-          {{ company.name }}
-        </option>
-      </select>
-    </div>
-
     <div class="d-flex justify-content-end gap-2">
       <button @click="$emit('cancel')" class="btn btn-light fw-medium px-4">Cancel</button>
-      <button @click="saveArea" class="btn text-white fw-medium px-4" style="background-color: #0B4F36;" :disabled="isSaving || !form.name || !form.company_id">
+      <button @click="saveArea" class="btn text-white fw-medium px-4" style="background-color: #0B4F36;" :disabled="isSaving || !form.name">
         {{ isSaving ? 'Saving...' : 'Save Area' }}
       </button>
     </div>
@@ -44,7 +34,6 @@ const isSaving = ref(false)
 
 const form = reactive({
   name: '',
-  company_id: '',
   polygon_coordinates: props.polygonCoordinates,
   area_size: props.calculatedArea
 })
@@ -54,7 +43,7 @@ const saveArea = async () => {
   try {
     const authCookie = useCookie('auth_token')
     
-    const response = await $fetch('http://localhost:9093/api/green-zones', {
+    const response = await $fetch('${config.public.apiBase}/api/green-zones', {
       method: 'POST',
       headers: { Authorization: `Bearer ${authCookie.value}` },
       body: form

@@ -70,7 +70,7 @@ const submitNewCompany = async () => {
   try {
     const authCookie = useCookie('auth_token')
     
-    await $fetch('http://localhost:9093/api/companies', {
+    await $fetch('${config.public.apiBase}/api/companies', {
       method: 'POST',
       headers: { Authorization: `Bearer ${authCookie.value}` },
       body: form

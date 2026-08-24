@@ -74,11 +74,9 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { reactive, ref } from 'vue'
 
-// Nuxt proporciona useRouter de forma automática, pero lo instanciamos aquí
 const router = useRouter()
 
 const form = reactive({
@@ -94,20 +92,30 @@ const handleLogin = async () => {
   errorMsg.value = ''
 
   try {
-    const response = await $fetch('http://localhost:9093/api/login', {
+    // 1. JWT espera 'username', así que empaquetamos el email con ese nombre
+    const payload = {
+      username: form.email,
+      password: form.password
+    }
+
+    // 2. Apuntamos al nuevo endpoint automático de Ninja JWT
+    const response = await $fetch('${config.public.apiBase}/api/token/pair', {
       method: 'POST',
-      body: form
+      body: payload
     })
 
-    if (response.success) {
+    // 3. Si devuelve un token de acceso, el login fue exitoso
+    if (response.access) {
       const authCookie = useCookie('auth_token')
-      // En lugar del texto quemado, guardamos el token criptográfico
-      authCookie.value = response.token 
+      
+      // Guardamos el token de acceso (access) en lugar del viejo 'token'
+      authCookie.value = response.access 
       
       router.push('/home')
     }
   } catch (error) {
-    errorMsg.value = error.response?._data?.error || 'No se pudo conectar con el servidor.'
+    // 4. JWT manda los mensajes de error dentro de la propiedad 'detail'
+    errorMsg.value = error.response?._data?.detail || 'Correo o contraseña incorrectos.'
   } finally {
     isLoading.value = false
   }

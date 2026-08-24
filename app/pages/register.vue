@@ -119,7 +119,7 @@ const registerAccount = async () => {
 
   try {
 
-    const response = await $fetch('http://localhost:9093/api/register', {
+    const response = await $fetch('${config.public.apiBase}/api/register', {
       method: 'POST',
       body: form
     })

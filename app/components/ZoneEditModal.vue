@@ -42,7 +42,7 @@ const updateFrequency = async () => {
   isSaving.value = true
   try {
     const authCookie = useCookie('auth_token')
-    await $fetch(`http://localhost:9093/api/green-zones/${props.zoneData.id}/frequency`, {
+    await $fetch(`${config.public.apiBase}/api/green-zones/${props.zoneData.id}/frequency`, {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${authCookie.value}` },
       body: { reminder_frequency: localFrequency.value }
