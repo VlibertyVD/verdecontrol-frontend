@@ -57,7 +57,7 @@ import { reactive, ref } from 'vue'
 // Definimos los eventos que este componente puede enviarle a su padre
 const emit = defineEmits(['close', 'created'])
 const isLoading = ref(false)
-
+const config = useRuntimeConfig()
 const form = reactive({
   name: '',
   email: '',
@@ -70,7 +70,7 @@ const submitNewCompany = async () => {
   try {
     const authCookie = useCookie('auth_token')
     
-    await $fetch('${config.public.apiBase}/api/companies', {
+    await $fetch(`${config.public.apiBase}/api/companies`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${authCookie.value}` },
       body: form

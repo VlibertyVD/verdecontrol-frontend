@@ -166,7 +166,7 @@ onMounted(async () => {
 // NUEVA FUNCIÓN: Eliminar zona
 const deleteZone = async (zoneId, layerToRemove) => {
   const isConfirmed = window.confirm("⚠️ ¿Estás seguro de que deseas eliminar esta zona? Esta acción no se puede deshacer.")
-  
+  const config = useRuntimeConfig()
   if (!isConfirmed) return
 
   try {

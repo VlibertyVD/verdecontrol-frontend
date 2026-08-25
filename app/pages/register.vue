@@ -111,7 +111,7 @@ const form = reactive({
 const isLoading = ref(false)
 const successMsg = ref('')
 const errorMsg = ref('')
-
+const config = useRuntimeConfig()
 const registerAccount = async () => {
   isLoading.value = true
   errorMsg.value = ''
@@ -119,7 +119,7 @@ const registerAccount = async () => {
 
   try {
 
-    const response = await $fetch('${config.public.apiBase}/api/register', {
+    const response = await $fetch(`${config.public.apiBase}/api/register`, {
       method: 'POST',
       body: form
     })

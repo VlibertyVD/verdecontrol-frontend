@@ -31,7 +31,7 @@ const props = defineProps({
 
 const emit = defineEmits(['cancel', 'saved'])
 const isSaving = ref(false)
-
+const config = useRuntimeConfig()
 const form = reactive({
   name: '',
   polygon_coordinates: props.polygonCoordinates,
@@ -43,7 +43,7 @@ const saveArea = async () => {
   try {
     const authCookie = useCookie('auth_token')
     
-    const response = await $fetch('${config.public.apiBase}/api/green-zones', {
+    const response = await $fetch(`${config.public.apiBase}/api/green-zones`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${authCookie.value}` },
       body: form

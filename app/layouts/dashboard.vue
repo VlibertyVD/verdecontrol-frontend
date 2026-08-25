@@ -8,40 +8,56 @@
         
         <!-- Logo -->
         <div class="d-flex align-items-center gap-2 fw-bold mb-4 px-2" style="color: #0B4F36;">
-          <div class="d-flex align-items-center justify-content-center text-white rounded" style="width: 24px; height: 24px; background-color: #0B4F36; font-size: 12px;">V</div>
+          <div class="d-flex align-items-center justify-content-center text-white rounded" style="width: 24px; height: 24px; background-color: #0B4F36; font-size: 12px;">
+            <i class="fa-solid fa-leaf"></i>
+          </div>
           <span class="fs-5">VerdeControl</span>
         </div>
         
-        <button class="btn text-white fw-medium w-100 mb-4" style="background-color: #0B4F36;">+ New Report</button>
+        <button class="btn text-white fw-medium w-100 mb-4" style="background-color: #0B4F36;">
+          <i class="fa-solid fa-plus me-1"></i> New Report
+        </button>
 
         <ul class="nav flex-column gap-2 mb-auto text-secondary small fw-medium">
           <li class="nav-item">
-            <NuxtLink to="/home" class="nav-link px-2 text-dark" exact-active-class="bg-success text-white rounded" style="exact-active-class: background-color: #0B4F36;">🎛️ Home (Timers)</NuxtLink>
+            <NuxtLink to="/home" class="nav-link px-2 text-dark" exact-active-class="bg-success text-white rounded">
+              <i class="fa-solid fa-stopwatch fa-fw me-2"></i> Home (Timers)
+            </NuxtLink>
           </li>
           <li class="nav-item">
-            <NuxtLink to="/map" class="nav-link px-2 text-dark" exact-active-class="bg-success text-white rounded" style="exact-active-class: background-color: #0B4F36;">🗺️ Map</NuxtLink>
+            <NuxtLink to="/map" class="nav-link px-2 text-dark" exact-active-class="bg-success text-white rounded">
+              <i class="fa-solid fa-map-location-dot fa-fw me-2"></i> Map
+            </NuxtLink>
           </li>
           <li class="nav-item">
-            <NuxtLink to="/companies" class="nav-link px-2 text-dark" exact-active-class="bg-success text-white rounded" style="exact-active-class: background-color: #0B4F36;">🏢 Companies</NuxtLink>
+            <NuxtLink to="/companies" class="nav-link px-2 text-dark" exact-active-class="bg-success text-white rounded">
+              <i class="fa-solid fa-building fa-fw me-2"></i> Companies
+            </NuxtLink>
           </li>
-          <li class="nav-item"><a href="#" class="nav-link text-secondary px-2">⚙️ Settings</a></li>
+          <li class="nav-item">
+            <a href="#" class="nav-link text-secondary px-2">
+              <i class="fa-solid fa-gear fa-fw me-2"></i> Settings
+            </a>
+          </li>
         </ul>
 
         <!-- Botón de Logout -->
         <div class="border-top pt-3 pb-4">
-          <a href="#" class="nav-link text-secondary px-2 small mb-2">❓ Help</a>
-          <button @click="handleLogout" class="nav-link text-secondary px-2 small border-0 bg-transparent text-start w-100">🚪 Log Out</button>
+          <a href="#" class="nav-link text-secondary px-2 small mb-2">
+            <i class="fa-solid fa-circle-question fa-fw me-2"></i> Help
+          </a>
+          <button @click="handleLogout" class="nav-link text-secondary px-2 small border-0 bg-transparent text-start w-100">
+            <i class="fa-solid fa-arrow-right-from-bracket fa-fw me-2"></i> Log Out
+          </button>
         </div>
       </div>
 
       <div class="col-md-10">
-        
         <slot /> 
       </div>
 
     </div>
   </div>
-
 </template>
 
 <script setup>

@@ -77,12 +77,12 @@ definePageMeta({
 
 const timers = ref([])
 const isLoading = ref(true)
-
+const config = useRuntimeConfig()
 const fetchTimers = async () => {
   try {
     const authCookie = useCookie('auth_token')
     
-    const data = await $fetch('${config.public.apiBase}/api/timers', {
+    const data = await $fetch(`${config.public.apiBase}/api/timers`, {
       // Le inyectamos el token en las cabeceras HTTP
       headers: {
         Authorization: `Bearer ${authCookie.value}`

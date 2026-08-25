@@ -31,7 +31,7 @@ import { ref } from 'vue'
 const props = defineProps({
   zoneData: Object
 })
-
+const config = useRuntimeConfig()
 const emit = defineEmits(['close', 'updated'])
 const isSaving = ref(false)
 

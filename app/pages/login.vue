@@ -78,7 +78,7 @@
 import { reactive, ref } from 'vue'
 
 const router = useRouter()
-
+const config = useRuntimeConfig()
 const form = reactive({
   email: '',
   password: ''
@@ -99,7 +99,7 @@ const handleLogin = async () => {
     }
 
     // 2. Apuntamos al nuevo endpoint automático de Ninja JWT
-    const response = await $fetch('${config.public.apiBase}/api/token/pair', {
+    const response = await $fetch(`${config.public.apiBase}/api/token/pair`, {
       method: 'POST',
       body: payload
     })
