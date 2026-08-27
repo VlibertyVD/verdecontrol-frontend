@@ -1,191 +1,45 @@
+<!-- pages/companies.vue -->
 <template>
   <div class="p-5 font-sans h-100">
     <div class="row g-5 h-100">
       
-      <!-- COLUMNA IZQUIERDA: Lista de Empresas -->
-      <div class="col-md-4 d-flex flex-column border-end pe-4" style="height: calc(100vh - 100px); overflow-y: auto;">
-        <h1 class="fw-bold mb-4" style="color: #0B4F36;">Companies</h1>
-        
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <button @click="showModal = true" class="btn btn-sm text-white fw-medium px-3 py-2 rounded-3 shadow-sm" style="background-color: #0B4F36;">
-          + New Company
-          </button>
-        </div>
-
-        <!-- Buscador -->
-        <div class="input-group mb-4 shadow-sm rounded-3 overflow-hidden">
-          <span class="input-group-text bg-white border-0 text-secondary">🔍</span>
-          <input type="text" class="form-control border-0 py-2 shadow-none" placeholder="Search company...">
-        </div>
-
-        <!-- Lista de Tarjetas -->
-        <div v-if="isLoadingList" class="text-secondary small">Cargando empresas...</div>
-        
-        <div class="d-flex flex-column gap-3">
-          <div 
-            v-for="company in companies" 
-            :key="company.id"
-            @click="fetchCompanyDetail(company.id)" 
-            class="card border p-3 rounded-4 cursor-pointer transition-all"
-            :class="selectedId === company.id ? 'border-success bg-light shadow-sm' : 'border-light-subtle bg-white hover-shadow'"
-            style="cursor: pointer;"
-          >
-            <div class="d-flex align-items-center justify-content-between">
-              <div class="d-flex align-items-center gap-3">
-                <div class="rounded p-2 bg-white border d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
-                  <span style="color: #0B4F36;" class="fw-bold fs-6">VC</span>
-                </div>
-                <div>
-                  <h6 class="mb-0 fw-bold text-dark">{{ company.name }}</h6>
-                  <small class="text-secondary">📍 {{ company.zone || 'Sede Principal' }}</small>
-                </div>
-              </div>
-              
-              <!-- EL BOTÓN MÁGICO CONECTADO AL COMPOSABLE -->
-              <div>
-                <span v-if="activeCompanyId === company.id" class="badge bg-success rounded-pill px-3 py-2">
-                  ✅ Activa
-                </span>
-                <button 
-                  v-else 
-                  @click.stop="setActiveCompany(company.id)" 
-                  class="btn btn-outline-success btn-sm rounded-pill px-3 fw-bold"
-                >
-                  Seleccionar
-                </button>
-              </div>
-
-            </div>
-          </div>
-        </div>
+      <!-- COLUMNA IZQUIERDA -->
+      <div class="col-md-4 border-end pe-4" style="height: calc(100vh - 100px); overflow-y: auto;">
+        <CompanyListPanel 
+          :companies="companies"
+          :isLoading="isLoadingList"
+          :selectedId="selectedId"
+          :activeId="activeCompanyId"
+          @create-new="showModal = true"
+          @view-detail="fetchCompanyDetail"
+          @activate="handleActivateCompany"
+        />
       </div>
 
-      <!-- COLUMNA DERECHA: Detalle de Empresa -->
+      <!-- COLUMNA DERECHA -->
       <div class="col-md-8 ps-4" style="height: calc(100vh - 100px); overflow-y: auto;">
         
-        <!-- Estado de carga o sin selección -->
-        <div v-if="!selectedId" class="h-100 d-flex align-items-center justify-content-center text-secondary">
+        <!-- Estados de carga o vacío -->
+        <div v-if="!selectedId" class="h-100 d-flex flex-column align-items-center justify-content-center text-secondary">
+          <i class="fa-solid fa-building fs-1 mb-3 text-muted opacity-50"></i>
           Selecciona una empresa para ver sus detalles.
         </div>
-        <div v-else-if="isLoadingDetail" class="h-100 d-flex align-items-center justify-content-center text-secondary">
+        <div v-else-if="isLoadingDetail" class="h-100 d-flex flex-column align-items-center justify-content-center text-secondary">
+          <i class="fa-solid fa-circle-notch fa-spin fs-2 mb-3" style="color: #0B4F36;"></i>
           Cargando detalles...
         </div>
 
-        <div v-else class="d-flex flex-column gap-4">
-          
-          <!-- Header Card -->
-          <div class="card border-0 shadow-sm rounded-4 p-4">
-            <div class="d-flex justify-content-between align-items-center">
-              <div class="d-flex align-items-center gap-4">
-                <div class="rounded bg-white border d-flex align-items-center justify-content-center shadow-sm" style="width: 80px; height: 80px;">
-                  <span style="color: #0B4F36;" class="fw-bold fs-3">VC</span>
-                </div>
-                <div>
-                  <h3 class="fw-bold mb-1">{{ companyDetail.name }}</h3>
-                  <div class="d-flex align-items-center gap-3">
-                    <span class="text-secondary small">ID: {{ companyDetail.company_code }}</span>
-                    <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1 fw-medium border border-success-subtle">
-                      ✓ {{ companyDetail.status || 'Active' }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div class="d-flex gap-2">
-                <button class="btn btn-outline-secondary rounded-3 px-4 fw-medium">Contact</button>
-                <button class="btn text-white rounded-3 px-4 fw-medium" style="background-color: #0B4F36;">Edit</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Assigned Areas -->
-          <div class="card border-0 shadow-sm rounded-4 p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-              <h6 class="fw-bold text-secondary mb-0">ASSIGNED AREAS ({{ companyDetail.green_zones?.length || 0 }})</h6>
-              <span class="text-secondary fs-5" style="cursor: pointer;">⤢</span>
-            </div>
-            
-            <div class="row g-3">
-              <div v-for="zone in companyDetail.green_zones" :key="zone.id" class="col-md-6">
-                <div class="card border-light-subtle rounded-4 overflow-hidden h-100 shadow-sm">
-                  <!-- AQUÍ CAMBIAMOS LA IMAGEN -->
-                  <div class="bg-secondary w-100" style="height: 100px; background-image: url('/images/card-green-zone.jpeg'); background-size: cover; background-position: center;"></div>
-                  
-                  <div class="p-3">
-                    <h6 class="fw-bold mb-3">{{ zone.name }}</h6>
-                    <div class="d-flex justify-content-between align-items-center">
-                      <span class="small text-secondary">{{ zone.area_size }}</span>
-                      <span v-if="!zone.needs_attention" class="badge bg-success-subtle text-success rounded-pill px-2 py-1">💧 {{ zone.current_metric || '100%' }}</span>
-                      <span v-else class="badge bg-danger-subtle text-danger rounded-pill px-2 py-1">⚠️ Review</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Bottom Row: Personnel & Stats -->
-          <div class="row g-4">
-            <!-- Personnel -->
-            <div class="col-md-6">
-              <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
-                <h6 class="fw-bold text-secondary mb-4">PERSONNEL IN CHARGE</h6>
-                <div class="d-flex flex-column gap-3 mb-4">
-                  
-                  <div v-for="person in companyDetail.personnel" :key="person.id" class="d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center gap-3">
-                      <img :src="person.avatar_url || 'https://ui-avatars.com/api/?name='+person.full_name+'&background=random'" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
-                      <div>
-                        <h6 class="mb-0 fw-bold fs-6">{{ person.full_name }}</h6>
-                        <small class="text-secondary">{{ person.role }}</small>
-                      </div>
-                    </div>
-                    <span class="text-secondary fs-5" style="cursor: pointer;">✉</span>
-                  </div>
-
-                  <div v-if="!companyDetail.personnel || !companyDetail.personnel.length" class="text-muted small">No personnel registered.</div>
-                </div>
-                <button class="btn btn-link text-success text-decoration-none fw-bold mt-auto p-0 text-start" style="color: #0B4F36 !important;">See all personnel</button>
-              </div>
-            </div>
-
-            <!-- Stats -->
-            <div class="col-md-6">
-              <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
-                <h6 class="fw-bold text-secondary mb-4">MONTHLY STATISTICS</h6>
-                
-                <div class="mb-4">
-                  <div class="d-flex justify-content-between align-items-center mb-1">
-                    <small class="fw-medium">Task Completion</small>
-                    <small class="fw-bold">92%</small>
-                  </div>
-                  <div class="progress" style="height: 6px;">
-                    <div class="progress-bar" role="progressbar" style="width: 92%; background-color: #0B4F36;"></div>
-                  </div>
-                </div>
-
-                <div class="mb-4 border-bottom pb-4">
-                  <div class="d-flex justify-content-between align-items-center mb-1">
-                    <small class="fw-medium">Flora Health Average</small>
-                    <small class="fw-bold text-success">88%</small>
-                  </div>
-                  <div class="progress" style="height: 6px;">
-                    <div class="progress-bar bg-success" role="progressbar" style="width: 88%;"></div>
-                  </div>
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center mt-auto">
-                  <span class="small fw-medium text-secondary">⏱ Next general cut:</span>
-                  <span class="fw-bold">In 3 days</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
+        <!-- El Dashboard de la Empresa -->
+        <div v-else>
+          <CompanyHeaderCard :company="companyDetail" />
+          <CompanyDashboardPanels :company="companyDetail" />
         </div>
+
       </div>
 
     </div>
     
+    <!-- MODAL -->
     <CompanyModal 
       v-if="showModal" 
       @close="showModal = false" 
@@ -199,7 +53,6 @@ import { ref, onMounted } from 'vue'
 
 definePageMeta({ layout: 'dashboard', middleware: 'auth' })
 
-// 1. Traemos el composable de la LISTA
 const { 
   companies, 
   isLoadingList, 
@@ -208,7 +61,6 @@ const {
   setActiveCompany 
 } = useCompanies()
 
-// 2. Traemos el composable del DETALLE
 const { 
   selectedId, 
   companyDetail, 
@@ -216,29 +68,24 @@ const {
   fetchCompanyDetail 
 } = useCompanyDetail()
 
-// 3. Variables y lógica visual
 const showModal = ref(false)
+const globalCompany = useState('globalSelectedCompany')
+
+// El puente para actualizar la barra lateral y el estado
+const handleActivateCompany = async (company) => {
+  await setActiveCompany(company.id) 
+  globalCompany.value = company 
+}
 
 const handleCompanyCreated = () => {
   showModal.value = false 
   fetchCompanies() 
 }
 
-// 4. Arranque de la página
 onMounted(async () => {
   await fetchCompanies()
-  // Si hay empresas, cargamos el detalle (haciendo fetch) de la primera
   if (companies.value.length > 0) {
     fetchCompanyDetail(companies.value[0].id)
   }
 })
 </script>
-
-<style scoped>
-.hover-shadow:hover {
-  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
-}
-.transition-all {
-  transition: all 0.2s ease-in-out;
-}
-</style>

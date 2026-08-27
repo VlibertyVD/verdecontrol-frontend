@@ -14,6 +14,8 @@
           <span class="fs-5">VerdeControl</span>
         </div>
         
+        <CompanyWidget />
+
         <button class="btn text-white fw-medium w-100 mb-4" style="background-color: #0B4F36;">
           <i class="fa-solid fa-plus me-1"></i> New Report
         </button>
