@@ -1,4 +1,3 @@
-<!-- components/CompanyDashboardPanels.vue -->
 <template>
   <div class="d-flex flex-column gap-4">
     <!-- Assigned Areas -->
@@ -34,7 +33,15 @@
       <!-- Personnel -->
       <div class="col-md-6">
         <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
-          <h6 class="fw-bold text-secondary mb-4">PERSONNEL IN CHARGE</h6>
+          
+          <!-- 🔥 AQUÍ ESTÁ EL BOTÓN MAGICO 🔥 -->
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h6 class="fw-bold text-secondary mb-0">PERSONNEL IN CHARGE</h6>
+            <button @click="$emit('add-personnel')" class="btn btn-sm btn-outline-success rounded-pill px-3 fw-bold" style="font-size: 0.75rem;">
+              <i class="fa-solid fa-plus me-1"></i> Add
+            </button>
+          </div>
+
           <div class="d-flex flex-column gap-3 mb-4">
             <div v-for="person in company.personnel" :key="person.id" class="d-flex justify-content-between align-items-center">
               <div class="d-flex align-items-center gap-3">
@@ -93,6 +100,8 @@ defineProps({
     required: true
   }
 })
+
+defineEmits(['add-personnel'])
 </script>
 
 <style scoped>

@@ -22,7 +22,7 @@
     <div v-if="globalCompany" class="mb-4 border-bottom pb-3">
       <h4 class="fw-bold text-dark d-flex align-items-center gap-2 mb-0">
         <i class="fa-regular fa-building fs-5"></i> {{ globalCompany?.name }}
-      </h4>
+    </h4>
     </div>
     
     <div v-else class="alert alert-warning shadow-sm rounded-4 border-0">

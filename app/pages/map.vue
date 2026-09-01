@@ -2,14 +2,15 @@
   <div class="position-relative w-100" style="height: 100vh;">
     <div id="map" class="w-100 h-100 position-absolute top-0 start-0" style="z-index: 1;"></div>
 
-    <div class="position-absolute top-0 start-0 m-4" style="z-index: 1000; width: 350px;">
-      <div class="input-group shadow-sm bg-white rounded-3 overflow-hidden">
-        <span class="input-group-text bg-white border-0 text-secondary">🔍</span>
-        <input type="text" class="form-control border-0 py-3 shadow-none" placeholder="Search green areas...">
+    <div class="position-absolute top-0 start-50 translate-middle-x mt-4" style="z-index: 1000; width: 350px;">
+      <div class="input-group shadow bg-white rounded-4 overflow-hidden border border-light-subtle">
+        <span class="input-group-text bg-white border-0 text-secondary ps-3">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </span>
+        <input type="text" class="form-control border-0 py-3 shadow-none fw-medium" placeholder="Search green areas...">
       </div>
     </div>
 
-    <!-- Componente 1: Guardar -->
     <ZoneSaveModal 
       v-if="showSaveModal"
       :companies="companies"
@@ -19,7 +20,6 @@
       @saved="handleAreaSaved"
     />
 
-    <!-- Componente 2: Editar -->
     <ZoneEditModal 
       v-if="showEditModal"
       :zoneData="selectedZone"

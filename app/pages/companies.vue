@@ -1,4 +1,3 @@
-<!-- pages/companies.vue -->
 <template>
   <div class="p-5 font-sans h-100">
     <div class="row g-5 h-100">
@@ -32,18 +31,31 @@
         <!-- El Dashboard de la Empresa -->
         <div v-else>
           <CompanyHeaderCard :company="companyDetail" />
-          <CompanyDashboardPanels :company="companyDetail" />
+          
+          <!-- 🔥 AQUÍ ATRAPAMOS EL EVENTO DEL BOTÓN ADD 🔥 -->
+          <CompanyDashboardPanels 
+            :company="companyDetail" 
+            @add-personnel="showPersonnelModal = true" 
+          />
         </div>
 
       </div>
 
     </div>
     
-    <!-- MODAL -->
+    <!-- MODAL EMPRESA -->
     <CompanyModal 
       v-if="showModal" 
       @close="showModal = false" 
       @created="handleCompanyCreated" 
+    />
+
+    <!-- 🔥 NUEVO MODAL DE PERSONAL 🔥 -->
+    <PersonnelCreateModal 
+      v-if="showPersonnelModal"
+      :companyId="selectedId"
+      @close="showPersonnelModal = false"
+      @created="handlePersonnelCreated"
     />
   </div>
 </template>
@@ -69,6 +81,10 @@ const {
 } = useCompanyDetail()
 
 const showModal = ref(false)
+
+// 1. Estado para mostrar/ocultar el modal de personal
+const showPersonnelModal = ref(false)
+
 const globalCompany = useState('globalSelectedCompany')
 
 // El puente para actualizar la barra lateral y el estado
@@ -80,6 +96,12 @@ const handleActivateCompany = async (company) => {
 const handleCompanyCreated = () => {
   showModal.value = false 
   fetchCompanies() 
+}
+
+// 2. Función que se dispara al crear un empleado con éxito
+const handlePersonnelCreated = () => {
+  showPersonnelModal.value = false 
+  fetchCompanyDetail(selectedId.value) // Refresca los datos en pantalla
 }
 
 onMounted(async () => {

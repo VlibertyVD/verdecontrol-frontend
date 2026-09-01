@@ -7,8 +7,8 @@
         
         <!-- Header -->
         <div class="text-center mb-4">
-          <div class="d-inline-flex align-items-center justify-content-center text-white rounded mb-3" style="width: 36px; height: 36px; background-color: #0B4F36; font-size: 18px; font-weight: bold;">
-            V
+          <div class="d-inline-flex align-items-center justify-content-center text-white rounded mb-3" style="width: 36px; height: 36px; background-color: #0B4F36; font-size: 18px;">
+            <i class="fa-solid fa-leaf"></i>
           </div>
           <h1 class="fw-bold fs-4 mb-1" style="color: #0B4F36;">VerdeControl</h1>
           <p class="text-secondary small">Precision management for living assets.</p>
@@ -20,7 +20,9 @@
           <div class="mb-3">
             <label class="form-label small fw-semibold">Email</label>
             <div class="input-group">
-              <span class="input-group-text bg-white border-end-0 text-muted">✉️</span>
+              <span class="input-group-text bg-white border-end-0 text-muted">
+                <i class="fa-solid fa-envelope fa-fw"></i>
+              </span>
               <input v-model="form.email" type="email" class="form-control border-start-0 ps-0" placeholder="name@company.com" required>
             </div>
           </div>
@@ -31,18 +33,27 @@
               <a href="#" class="text-decoration-none small text-secondary" style="font-size: 0.75rem;">Forgot password?</a>
             </div>
             <div class="input-group">
-              <span class="input-group-text bg-white border-end-0 text-muted">🔒</span>
+              <span class="input-group-text bg-white border-end-0 text-muted">
+                <i class="fa-solid fa-lock fa-fw"></i>
+              </span>
               <input v-model="form.password" type="password" class="form-control border-start-0 ps-0" placeholder="••••••••" required>
             </div>
           </div>
 
           <!-- Botón Principal -->
           <button type="submit" class="btn text-white w-100 py-2 mb-3 fw-semibold rounded-2" style="background-color: #0B4F36;" :disabled="isLoading">
-            {{ isLoading ? 'Signing In...' : 'Sign In →' }}
+            <span v-if="isLoading">
+              <i class="fa-solid fa-circle-notch fa-spin me-2"></i> Signing In...
+            </span>
+            <span v-else>
+              Sign In <i class="fa-solid fa-arrow-right ms-2"></i>
+            </span>
           </button>
 
           <!-- Mensaje de Error -->
-          <div v-if="errorMsg" class="alert alert-danger py-2 text-center small mb-3 border-0">{{ errorMsg }}</div>
+          <div v-if="errorMsg" class="alert alert-danger py-2 text-center small mb-3 border-0">
+            <i class="fa-solid fa-circle-exclamation me-2"></i> {{ errorMsg }}
+          </div>
 
           <!-- Divisor -->
           <div class="d-flex align-items-center mb-4 mt-2">
@@ -53,11 +64,11 @@
 
           <!-- Botones Sociales -->
           <div class="d-flex gap-2 mb-4">
-            <button type="button" class="btn btn-outline-secondary w-50 d-flex align-items-center justify-content-center gap-2 py-2">
-              <span class="fs-6">G</span> <span class="small fw-semibold">Google</span>
+            <button type="button" class="btn btn-outline-secondary w-50 d-flex align-items-center justify-content-center gap-2 py-2 hover-bg-light">
+              <i class="fa-brands fa-google fs-6"></i> <span class="small fw-semibold">Google</span>
             </button>
-            <button type="button" class="btn btn-outline-secondary w-50 d-flex align-items-center justify-content-center gap-2 py-2">
-              <span class="fs-6">M</span> <span class="small fw-semibold">Microsoft</span>
+            <button type="button" class="btn btn-outline-secondary w-50 d-flex align-items-center justify-content-center gap-2 py-2 hover-bg-light">
+              <i class="fa-brands fa-microsoft fs-6"></i> <span class="small fw-semibold">Microsoft</span>
             </button>
           </div>
 
@@ -74,6 +85,7 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import { reactive, ref } from 'vue'
 
@@ -92,32 +104,32 @@ const handleLogin = async () => {
   errorMsg.value = ''
 
   try {
-    // 1. JWT espera 'username', así que empaquetamos el email con ese nombre
     const payload = {
       username: form.email,
       password: form.password
     }
 
-    // 2. Apuntamos al nuevo endpoint automático de Ninja JWT
     const response = await $fetch(`${config.public.apiBase}/api/token/pair`, {
       method: 'POST',
       body: payload
     })
 
-    // 3. Si devuelve un token de acceso, el login fue exitoso
     if (response.access) {
       const authCookie = useCookie('auth_token')
-      
-      // Guardamos el token de acceso (access) en lugar del viejo 'token'
       authCookie.value = response.access 
-      
       router.push('/home')
     }
   } catch (error) {
-    // 4. JWT manda los mensajes de error dentro de la propiedad 'detail'
     errorMsg.value = error.response?._data?.detail || 'Correo o contraseña incorrectos.'
   } finally {
     isLoading.value = false
   }
 }
 </script>
+
+<style scoped>
+.hover-bg-light:hover {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+</style>
