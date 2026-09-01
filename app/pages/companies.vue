@@ -32,7 +32,6 @@
         <div v-else>
           <CompanyHeaderCard :company="companyDetail" />
           
-          <!-- 🔥 AQUÍ ATRAPAMOS EL EVENTO DEL BOTÓN ADD 🔥 -->
           <CompanyDashboardPanels 
             :company="companyDetail" 
             @add-personnel="showPersonnelModal = true" 
@@ -50,7 +49,6 @@
       @created="handleCompanyCreated" 
     />
 
-    <!-- 🔥 NUEVO MODAL DE PERSONAL 🔥 -->
     <PersonnelCreateModal 
       v-if="showPersonnelModal"
       :companyId="selectedId"
