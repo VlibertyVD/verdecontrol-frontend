@@ -6,7 +6,12 @@
       <div class="col-lg-6 d-flex flex-column justify-content-center align-items-center p-5">
         <div style="max-width: 450px; width: 100%;">
           
-          <h1 class="fw-bold mb-2" style="color: #0B4F36;">Join VerdeControl</h1>
+          <!-- 🔥 TÍTULO CON LINK AL HOME 🔥 -->
+          <h1 class="fw-bold mb-2">
+            <NuxtLink to="/" class="text-decoration-none" style="color: #0B4F36;">
+              Join VerdeControl
+            </NuxtLink>
+          </h1>
           <p class="text-secondary mb-4 small">Precision management for your living assets. Create your corporate account to get started.</p>
 
           <!-- Formulario: el @submit.prevent evita que la página recargue -->
