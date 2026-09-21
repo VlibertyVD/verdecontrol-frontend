@@ -6,7 +6,6 @@
       <div class="col-lg-6 d-flex flex-column justify-content-center align-items-center p-5">
         <div style="max-width: 450px; width: 100%;">
           
-          <!-- 🔥 TÍTULO CON LINK AL HOME 🔥 -->
           <h1 class="fw-bold mb-2">
             <NuxtLink to="/" class="text-decoration-none" style="color: #0B4F36;">
               Join VerdeControl
